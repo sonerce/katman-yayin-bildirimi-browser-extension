@@ -3,7 +3,7 @@
  */
 
 const CHANNEL_NAME = 'hype';
-const CHECK_INTERVAL = 0.5; // Her 30 saniyede bir kontrol et (0.5 dakika)
+const CHECK_INTERVAL = 0.167; // Her 10 saniyede bir kontrol et (0.167 dakika)
 const NOTIFICATION_INTERVAL = 50000; // Her 50 saniyede bir bildirim göster (milisaniye)
 const MAX_NOTIFICATIONS = 2; // Maksimum bildirim sayısı
 
@@ -112,7 +112,7 @@ function showNotification(isFirstNotification = false) {
     type: 'basic',
     iconUrl: 'icons/icon128.png',
     title: isFirstNotification ? 'Yayın Başladı!' : 'Yayın Devam Ediyor!',
-    message: `${CHANNEL_NAME} şu anda Kick.com'da yayında!`,
+    message: `${CHANNEL_NAME} şu anda Kick.com'da yayinda!`,
     priority: 2,
     requireInteraction: false,
     silent: true // Chrome'un kendi bildirim sesini kapatıyoruz
@@ -154,7 +154,7 @@ function stopPeriodicNotification() {
 // Badge'i yanıp söndür
 function toggleBadge() {
   badgeState = !badgeState;
-  chrome.action.setBadgeText({ text: badgeState ? 'LIVE' : '' });
+  chrome.action.setBadgeText({ text: badgeState ? 'Canlı' : '' });
   chrome.action.setBadgeBackgroundColor({ color: badgeState ? '#ff0000' : '#800080' });
 }
 
