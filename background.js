@@ -22,39 +22,28 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({ notificationCount: 0 });
 });
 
-// Ses çalma fonksiyonu
+// Offscreen document oluşturma ve ses çalma
 async function playNotificationSound() {
-  try {
-    // Aktif Kick.com sekmelerini bul
-    const tabs = await chrome.tabs.query({ url: 'https://kick.com/*' });
-    
-    if (tabs.length > 0) {
-      // İlk bulduğumuz sekmede sesi çal
-      chrome.tabs.sendMessage(tabs[0].id, { action: 'playNotificationSound' });
-    } else {
-      // Kick.com açık değilse yeni sekme aç
-      const tab = await chrome.tabs.create({ 
-        url: 'https://kick.com',
-        active: false
-      });
+  const offscreenUrl = chrome.runtime.getURL('offscreen.html');
+  const existingContexts = await chrome.runtime.getContexts({
+    contextTypes: ['OFFSCREEN_DOCUMENT'],
+    documentUrls: [offscreenUrl]
+  });
 
-      // Sekme yüklenene kadar bekle
-      chrome.tabs.onUpdated.addListener(function listener(tabId, info) {
-        if (tabId === tab.id && info.status === 'complete') {
-          // Listener'ı kaldır
-          chrome.tabs.onUpdated.removeListener(listener);
-          
-          // Sesi çal ve sekmeyi kapat
-          setTimeout(() => {
-            chrome.tabs.sendMessage(tab.id, { action: 'playNotificationSound' });
-            setTimeout(() => chrome.tabs.remove(tab.id), 2000);
-          }, 500);
-        }
-      });
-    }
-  } catch (error) {
-    console.error('Ses çalma hatası:', error);
+  if (existingContexts.length > 0) {
+    chrome.runtime.sendMessage({ action: 'playNotificationSound' });
+    return;
   }
+
+  await chrome.offscreen.createDocument({
+    url: 'offscreen.html',
+    reasons: ['AUDIO_PLAYBACK'],
+    justification: 'Playing a notification sound when the streamer goes live.',
+  });
+  // Gecikme, offscreen dokümanının yüklenmesini beklemek için
+  setTimeout(() => {
+    chrome.runtime.sendMessage({ action: 'playNotificationSound' });
+  }, 500);
 }
 
 // Yayın durumunu kontrol et
