@@ -4,23 +4,12 @@
   "version": "1.0",
   "description": "Katman yayın bildirim aracı",
   "author": "Eurores (instagram.com/soycel) - KRMNGraphic (instagram.com/krmngraphic)",
-  "content_scripts": [
-    {
-      "matches": ["https://kick.com/*"],
-      "js": ["content.js"]
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": ["notification.mp3"],
-      "matches": ["https://kick.com/*"]
-    }
-  ],
   "permissions": [
     "notifications",
     "alarms",
     "storage",
-    "tabs"
+    "tabs",
+    "offscreen"
   ],
   "host_permissions": [
     "https://kick.com/*"
